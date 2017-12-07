@@ -65,6 +65,15 @@ void diffRotation(double cx, double cy, double cz, double lx, double ly, double 
   oz = atan2(srzcrx / cos(ox), crzcrx / cos(ox));
 }
 
+/*
+*该函数将新的特征点序列从VO线转换到BA线，其坐标转换关系参考sketch文件夹下的“3.png”
+*R_w_bc=[cbcy 0 sbcy;0 1 0;-sbcy 0 cbcy]*[1 0 0;0 cbcx -sbcx;0 sbcx cbcx]*[cbcz -sbcz 0;sbcz cbcz 0;0 0 1];
+*R_w_bl=[cbly 0 sbly;0 1 0;-sbly 0 cbly]*[1 0 0;0 cblx -sblx;0 sblx cblx]*[cblz -sblz 0;sblz cblz 0;0 0 1];
+*R_w_al=[caly 0 saly;0 1 0;-saly 0 caly]*[1 0 0;0 calx -salx;0 salx calx]*[calz -salz 0;salz calz 0;0 0 1];
+*R_bl_al= (R_w_bl).' * R_w_al;
+*R_w_tb= R_w_bc * R_bl_al;
+*R_w_tb就是将新特征序列首帧变到BA线后的旋转矩阵
+*/
 void transformAssociateToBA()
 {
   double txDiff = txRec - transformBefBA[3];
@@ -216,6 +225,8 @@ int main(int argc, char** argv)
 
   ros::Publisher odomAftBAPub = nh.advertise<nav_msgs::Odometry> ("/aft_ba_to_init", 1);
 
+  ros::Publisher odomTestBAPub = nh.advertise<nav_msgs::Odometry> ("/test_ba", 1);
+
   tf::TransformBroadcaster tfBroadcaster;
 
   Vector2d pp(0, 0);
@@ -262,8 +273,32 @@ int main(int argc, char** argv)
       tyRec = depthPoints[0]->points[1].v;
       tzRec = depthPoints[0]->points[1].depth;
 
+      //transformAssociateToBA();
+
+      /*geometry_msgs::Quaternion geoQuat_test = tf::createQuaternionMsgFromRollPitchYaw
+                                (rollRec, -pitchRec, -yawRec);
+
+      nav_msgs::Odometry odomTestBA;
+      odomTestBA.header.frame_id = "/camera_init";
+      odomTestBA.child_frame_id = "/test_ba";
+      odomTestBA.header.stamp = ros::Time().fromSec(depthPointsTime);
+      odomTestBA.pose.pose.orientation.x = -geoQuat_test.y;
+      odomTestBA.pose.pose.orientation.y = -geoQuat_test.z;
+      odomTestBA.pose.pose.orientation.z = geoQuat_test.x;
+      odomTestBA.pose.pose.orientation.w = geoQuat_test.w;
+      odomTestBA.pose.pose.position.x = txRec;
+      odomTestBA.pose.pose.position.y = tyRec;
+      odomTestBA.pose.pose.position.z = tzRec;
+      odomTestBAPub.publish(odomTestBA);
+      */
+
       transformAssociateToBA();
 
+      /*
+      *这里有个坐标系的对应关系，在Pose3d()函数中的x,y,z轴分别对应着实际坐标系的z,x,y轴，
+      *所以Pose3d()中的x,y,z值分别为tzRec，txRec，tyRec，而roll,pitch,yaw是根据实际机体
+      *的旋转关系定义的，所以yawRec, pitchRec, rollRec就对应Pose3d()中传入值的roll,pitch,yaw
+      */
       Pose3d_Factor* poseFactors0 = new Pose3d_Factor(pose0, 
                                     Pose3d(tzRec, txRec, tyRec, yawRec, pitchRec, rollRec), noise2);
       ba.add_factor(poseFactors0);
@@ -499,9 +534,9 @@ int main(int argc, char** argv)
       if(poses[0]->value().pitch()==pitchTest&&
          poses[0]->value().yaw()==yawTest&&
               poses[0]->value().roll()==rollTest&&
-              poses[0]->value().x()==txTest&&
-              poses[0]->value().y()==tyTest&&
-              poses[0]->value().z()==tzTest)
+              poses[0]->value().z()==txTest&&
+              poses[0]->value().x()==tyTest&&
+              poses[0]->value().y()==tzTest)
       {
           ROS_INFO("it is same!!!\n");
       }
