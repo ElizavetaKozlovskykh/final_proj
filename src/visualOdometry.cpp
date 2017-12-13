@@ -714,7 +714,6 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   */
 
   geometry_msgs::Quaternion geoQuat = tf::createQuaternionMsgFromRollPitchYaw(rz, -rx, -ry);
-  //geometry_msgs::Quaternion geoQuat = tf::createQuaternionMsgFromRollPitchYaw(rz, rx, ry);
 
   nav_msgs::Odometry voData;
   voData.header.frame_id = "/camera_init";
@@ -722,8 +721,6 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   voData.header.stamp = imagePoints2->header.stamp;
   voData.pose.pose.orientation.x = -geoQuat.y;
   voData.pose.pose.orientation.y = -geoQuat.z;
-  //voData.pose.pose.orientation.x = geoQuat.y;
-  //voData.pose.pose.orientation.y = geoQuat.z;
   voData.pose.pose.orientation.z = geoQuat.x;
   voData.pose.pose.orientation.w = geoQuat.w;
   voData.pose.pose.position.x = tx;
@@ -739,7 +736,6 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   voTrans.child_frame_id_ = "/camera";
   voTrans.stamp_ = imagePoints2->header.stamp;
   voTrans.setRotation(tf::Quaternion(-geoQuat.y, -geoQuat.z, geoQuat.x, geoQuat.w));
-  //voTrans.setRotation(tf::Quaternion(geoQuat.y, geoQuat.z, geoQuat.x, geoQuat.w));
   voTrans.setOrigin(tf::Vector3(tx, ty, tz));
   tfBroadcasterPointer->sendTransform(voTrans);
 
@@ -777,7 +773,7 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
       //这一步是对标号为ind的特征点深度进行的一个粗略估计,后面如果该特征点可以直接从点云或者三角测量获得深度值,
       //则这个估计值失效,如果后面不能得到该特征深度值,则仍使用该估计值
       ////////////////////////////////////////////////////////////////////
-      double ipz = ipRelations->points[i].s;
+      /*double ipz = ipRelations->points[i].s;
       double ipx = ipRelations->points[i].x * ipz;
       double ipy = ipRelations->points[i].y * ipz;
 
@@ -789,10 +785,10 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
       double y2 = crx * y1 - srx * z1;
       double z2 = srx * y1 + crx * z1;
       ipd.depth = z2 + transform[5];
-
+*/
       ////////////////////////////////////////////////////////////////////
 
-      //ipd.depth = ipRelations->points[i].s + transform[5];
+      ipd.depth = ipRelations->points[i].s + transform[5];
       ipd.label = ipRelations->points[i].v;
       ipd.ind = ipInd[i];
 
