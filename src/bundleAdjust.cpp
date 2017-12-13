@@ -32,22 +32,13 @@ bool newKeyframe = false;
 double rollRec, pitchRec, yawRec;
 double txRec, tyRec, tzRec;
 
-double rollTest, pitchTest, yawTest;
-double txTest, tyTest, tzTest;
-
 double transformBefBA[6] = {0};
 double transformAftBA[6] = {0};
 
 void diffRotation(double cx, double cy, double cz, double lx, double ly, double lz, 
                   double &ox, double &oy, double &oz)
 {
-    /*
-     *计算相邻两帧的旋转角
-     *R_wc=[ccy 0 scy;0 1 0;-scy 0 ccy]*[1 0 0;0 ccx -scx;0 scx ccx]*[ccz -scz 0;scz ccz 0;0 0 1];
-     *R_wl=[cly 0 sly;0 1 0;-sly 0 cly]*[1 0 0;0 clx -slx;0 slx clx]*[clz -slz 0;slz clz 0;0 0 1];
-     *R_lc=(R_wl).'*R_wc;
-    */
-  double srx = cos(cx)*cos(cy)*(sin(ly)*sin(lz) + cos(ly)*cos(lz)*sin(lx))
+  double srx = cos(cx)*cos(cy)*(sin(ly)*sin(lz) + cos(ly)*cos(lz)*sin(lx)) 
              - cos(cx)*sin(cy)*(cos(ly)*sin(lz) - cos(lz)*sin(lx)*sin(ly)) - cos(lx)*cos(lz)*sin(cx);
   ox = -asin(srx);
 
@@ -71,7 +62,6 @@ void transformAssociateToBA()
   double tyDiff = tyRec - transformBefBA[4];
   double tzDiff = tzRec - transformBefBA[5];
 
-  //注意这里是将参考坐标系旋转到目标坐标系，所以roll,pitch,yaw都应该加一个负号
   double x1 = cos(yawRec) * txDiff - sin(yawRec) * tzDiff;
   double y1 = tyDiff;
   double z1 = sin(yawRec) * txDiff + cos(yawRec) * tzDiff;
@@ -155,13 +145,6 @@ void transformAssociateToBA()
   txRec = transformAftBA[3] + txDiff;
   tyRec = transformAftBA[4] + tyDiff;
   tzRec = transformAftBA[5] + tzDiff;
-
-  rollTest=rollRec;
-  pitchTest=pitchRec;
-  yawTest=yawRec;
-  txTest=txRec;
-  tyTest=tyRec;
-  tzTest=tzRec;
 }
 
 void depthPointsHandler(const sensor_msgs::PointCloud2ConstPtr& depthPoints2)
@@ -304,7 +287,6 @@ int main(int argc, char** argv)
         tyDiff = -sin(rollRec) * x2 + cos(rollRec) * y2;
         tzDiff = z2;
 
-        //rollDiff, pitchDiff, yawDiff存储的是后一帧到前一帧的旋转角度，参考系是前一帧
         double rollDiff, pitchDiff, yawDiff;
         diffRotation(pitch, yaw, roll, pitchRec, yawRec, rollRec, pitchDiff, yawDiff, rollDiff);
 
@@ -495,19 +477,6 @@ int main(int argc, char** argv)
       transformAftBA[3] = poses[keyframeNum - 1]->value().y();
       transformAftBA[4] = poses[keyframeNum - 1]->value().z();
       transformAftBA[5] = poses[keyframeNum - 1]->value().x();
-
-      if(poses[0]->value().pitch()==pitchTest&&
-         poses[0]->value().yaw()==yawTest&&
-              poses[0]->value().roll()==rollTest&&
-              poses[0]->value().x()==txTest&&
-              poses[0]->value().y()==tyTest&&
-              poses[0]->value().z()==tzTest)
-      {
-          ROS_INFO("it is same!!!\n");
-      }
-      else{
-          ROS_INFO("nonononono\n");
-      }
 
       transformAftBA[0] = (1 - 0.5) * transformAftBA[0] + 0.5 * transformBefBA[0];
       //transformAftBA[1] = (1 - 0.1) * transformAftBA[1] + 0.1 * transformBefBA[1];
