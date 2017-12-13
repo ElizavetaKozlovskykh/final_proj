@@ -31,7 +31,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: imageCloud
 Visualization Manager:
   Class: ""
   Displays:
@@ -108,10 +108,10 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 40.352
-        Min Value: 0.0608472
+        Max Value: 4.16579
+        Min Value: -1.84389
         Value: true
-      Axis: Z
+      Axis: Y
       Channel Name: intensity
       Class: rviz/PointCloud2
       Color: 255; 255; 255
@@ -229,22 +229,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 9.24993
+      Distance: 60.6244
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -2.3482
-        Y: 5.67957
-        Z: 33.2319
+        X: -1.73784
+        Y: 7.00876
+        Z: 22.9273
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.0652039
+      Pitch: -0.019796
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.8004
+      Yaw: 1.5904
     Saved: ~
 Window Geometry:
   Displays:

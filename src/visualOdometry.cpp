@@ -421,10 +421,13 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
       double tz = transform[5];
 
       if (fabs(ipr.v) < 0.5) {
-	  //这里R矩阵使用欧拉角roll,pitch yaw来表示的，下面六个公式是论文公式（6）在对roll,pitch,yaw和tx,ty,tz求偏导
-      //transform[0]存储的是绕x轴旋转的角度，transform[1]存绕y轴角度，transform[2]存绕z轴角度
-      //这里计算的R、T矩阵是k-1时刻旋转到k时刻的R、T矩阵，注意这个主次关系
-      //从k-1旋转到k的顺序是：z轴->x轴->y轴，注意顺序
+    /*
+     * 这里R矩阵使用欧拉角roll,pitch yaw来表示的，下面六个公式是论文公式（6）在对roll,pitch,yaw和tx,ty,tz求偏导
+     *transform[0]存储的是绕x轴旋转的角度，transform[1]存绕y轴角度，transform[2]存绕z轴角度
+     *这里计算的R、T矩阵是k-1时刻旋转到k时刻的R、T矩阵，注意这个主次关系,参考坐标系是current,即k时刻坐标系
+     *从k-1旋转到k的顺序是：z轴->x轴->y轴，注意顺序
+     *R_cl=[crz -srz 0;srz crz 0;0 0 1]*[1 0 0;0 crx -srx;0 srx crx]*[cry 0 sry;0 1 0;-sry 0 cry];
+    */
         ipr2.x = v0*(crz*srx*(tx - tz*u1) - crx*(ty*u1 - tx*v1) + srz*srx*(ty - tz*v1)) 
                - u0*(sry*srx*(ty*u1 - tx*v1) + crz*sry*crx*(tx - tz*u1) + sry*srz*crx*(ty - tz*v1)) 
                + cry*srx*(ty*u1 - tx*v1) + cry*crz*crx*(tx - tz*u1) + cry*srz*crx*(ty - tz*v1);
@@ -616,6 +619,7 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   double z2 = sin(rx) * y1 + cos(rx) * z1;
 
   //当前帧与上一帧的位移量通过rx,ry,rz的旋转，计算当前帧和初始帧的位移增量，叠加到transformSum[]中
+  //该增量计算得到的是last帧相对于current帧在世界坐标系下的位移,所以current相对于Last在世界坐标系下的位移为负值,所以是减去
   double tx = transformSum[3] - (cos(ry) * x2 + sin(ry) * z2);
   double ty = transformSum[4] - y2;
   double tz = transformSum[5] - (-sin(ry) * x2 + cos(ry) * z2);
@@ -666,6 +670,12 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
       startTransCur->push_back(startTransLast->points[j]);
 
       if ((*ipDepthLast)[j] > 0) {
+      /*
+      *transform[]里存的就是T_cl,所以将Last坐标系的点按照zxy(从右往左看)的顺序旋转,再加上位移就变换到了current坐标系
+      *而R_lc就是把transform[0]~transform[2]的pitch,yaw,roll角取负值然后按照yxz(从右往左看)的顺序变换就可得到
+      *这里有一点注意的是,将transform[0]~[2]按照yxz相乘得到的R_lc和直接将R_cl取转置得到的R_lc差了三个角度的负值
+      *所以通过旋转相乘得到R_lc时transform[0]~[2]要先取负值
+      */
         double ipz = (*ipDepthLast)[j];
         double ipx = imagePointsLast->points[j].u * ipz;
         double ipy = imagePointsLast->points[j].v * ipz;
@@ -753,7 +763,24 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
 
       ipd.u = ipRelations->points[i].z;
       ipd.v = ipRelations->points[i].h;
-      //这一步是对当前帧特征点深度进行的一个粗略估计
+      //这一步是对标号为ind的特征点深度进行的一个粗略估计,后面如果该特征点可以直接从点云或者三角测量获得深度值,
+      //则这个估计值失效,如果后面不能得到该特征深度值,则仍使用该估计值
+      ////////////////////////////////////////////////////////////////////
+      /*double ipz = ipRelations->points[i].s;
+      double ipx = ipRelations->points[i].x * ipz;
+      double ipy = ipRelations->points[i].y * ipz;
+
+      double x1 = cry * ipx + sry * ipz;
+      double y1 = ipy;
+      double z1 = -sry * ipx + cry * ipz;
+
+      double x2 = x1;
+      double y2 = crx * y1 - srx * z1;
+      double z2 = srx * y1 + crx * z1;
+      ipd.depth = z2 + transform[5];
+      */
+      ////////////////////////////////////////////////////////////////////
+
       ipd.depth = ipRelations->points[i].s + transform[5];
       ipd.label = ipRelations->points[i].v;
       ipd.ind = ipInd[i];

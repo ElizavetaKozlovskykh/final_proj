@@ -372,6 +372,7 @@ int main(int argc, char** argv)
               if (dpPointerNext->points[ptCountNext].ind == dpPointer->points[j].ind) {
                 ptFound = true;
               }
+
               if (dpPointerNext->points[ptCountNext].ind >= dpPointer->points[j].ind) {
                 break;
               }
@@ -530,19 +531,6 @@ int main(int argc, char** argv)
       transformAftBA[3] = poses[keyframeNum - 1]->value().y();
       transformAftBA[4] = poses[keyframeNum - 1]->value().z();
       transformAftBA[5] = poses[keyframeNum - 1]->value().x();
-
-      if(poses[0]->value().pitch()==pitchTest&&
-         poses[0]->value().yaw()==yawTest&&
-              poses[0]->value().roll()==rollTest&&
-              poses[0]->value().z()==txTest&&
-              poses[0]->value().x()==tyTest&&
-              poses[0]->value().y()==tzTest)
-      {
-          ROS_INFO("it is same!!!\n");
-      }
-      else{
-          ROS_INFO("nonononono\n");
-      }
 
       transformAftBA[0] = (1 - 0.5) * transformAftBA[0] + 0.5 * transformBefBA[0];
       //transformAftBA[1] = (1 - 0.1) * transformAftBA[1] + 0.1 * transformBefBA[1];
