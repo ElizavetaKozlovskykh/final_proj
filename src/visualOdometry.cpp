@@ -706,7 +706,15 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   angleSum[1] -= transform[1];
   angleSum[2] -= transform[2];
 
+  /* rz,rx,ry分别对应着标准右手坐标系中的roll,pitch,yaw角,通过查看createQuaternionMsgFromRollPitchYaw()的函数定义可以发现.
+   * 当pitch和yaw角给负值后,四元数中的y和z会变成负值,x和w不受影响.由四元数定义可以知道,x,y,z是指旋转轴在三个轴上的投影,w影响
+   * 旋转角度,所以由createQuaternionMsgFromRollPitchYaw()计算得到四元数后,其在一般右手坐标系中的x,y,z分量对应到该应用场景下
+   * 的坐标系中,geoQuat.x对应实际坐标系下的z轴分量,geoQuat.y对应x轴分量,geoQuat.z对应实际的y轴分量,而由于rx和ry在计算四元数
+   * 时给的是负值,所以geoQuat.y和geoQuat.z取负值,这样就等于没变
+  */
+
   geometry_msgs::Quaternion geoQuat = tf::createQuaternionMsgFromRollPitchYaw(rz, -rx, -ry);
+  //geometry_msgs::Quaternion geoQuat = tf::createQuaternionMsgFromRollPitchYaw(rz, rx, ry);
 
   nav_msgs::Odometry voData;
   voData.header.frame_id = "/camera_init";
@@ -714,6 +722,8 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   voData.header.stamp = imagePoints2->header.stamp;
   voData.pose.pose.orientation.x = -geoQuat.y;
   voData.pose.pose.orientation.y = -geoQuat.z;
+  //voData.pose.pose.orientation.x = geoQuat.y;
+  //voData.pose.pose.orientation.y = geoQuat.z;
   voData.pose.pose.orientation.z = geoQuat.x;
   voData.pose.pose.orientation.w = geoQuat.w;
   voData.pose.pose.position.x = tx;
@@ -729,6 +739,7 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   voTrans.child_frame_id_ = "/camera";
   voTrans.stamp_ = imagePoints2->header.stamp;
   voTrans.setRotation(tf::Quaternion(-geoQuat.y, -geoQuat.z, geoQuat.x, geoQuat.w));
+  //voTrans.setRotation(tf::Quaternion(geoQuat.y, geoQuat.z, geoQuat.x, geoQuat.w));
   voTrans.setOrigin(tf::Vector3(tx, ty, tz));
   tfBroadcasterPointer->sendTransform(voTrans);
 
@@ -766,7 +777,7 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
       //这一步是对标号为ind的特征点深度进行的一个粗略估计,后面如果该特征点可以直接从点云或者三角测量获得深度值,
       //则这个估计值失效,如果后面不能得到该特征深度值,则仍使用该估计值
       ////////////////////////////////////////////////////////////////////
-      /*double ipz = ipRelations->points[i].s;
+      double ipz = ipRelations->points[i].s;
       double ipx = ipRelations->points[i].x * ipz;
       double ipy = ipRelations->points[i].y * ipz;
 
@@ -778,10 +789,10 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
       double y2 = crx * y1 - srx * z1;
       double z2 = srx * y1 + crx * z1;
       ipd.depth = z2 + transform[5];
-      */
+
       ////////////////////////////////////////////////////////////////////
 
-      ipd.depth = ipRelations->points[i].s + transform[5];
+      //ipd.depth = ipRelations->points[i].s + transform[5];
       ipd.label = ipRelations->points[i].v;
       ipd.ind = ipInd[i];
 
