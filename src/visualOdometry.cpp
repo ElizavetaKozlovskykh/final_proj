@@ -714,6 +714,7 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   */
 
   geometry_msgs::Quaternion geoQuat = tf::createQuaternionMsgFromRollPitchYaw(rz, -rx, -ry);
+  //geometry_msgs::Quaternion geoQuat = tf::createQuaternionMsgFromRollPitchYaw(rz, rx, ry);
 
   nav_msgs::Odometry voData;
   voData.header.frame_id = "/camera_init";
@@ -721,6 +722,8 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   voData.header.stamp = imagePoints2->header.stamp;
   voData.pose.pose.orientation.x = -geoQuat.y;
   voData.pose.pose.orientation.y = -geoQuat.z;
+  //voData.pose.pose.orientation.x = geoQuat.y;
+  //voData.pose.pose.orientation.y = geoQuat.z;
   voData.pose.pose.orientation.z = geoQuat.x;
   voData.pose.pose.orientation.w = geoQuat.w;
   voData.pose.pose.position.x = tx;
@@ -736,6 +739,7 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   voTrans.child_frame_id_ = "/camera";
   voTrans.stamp_ = imagePoints2->header.stamp;
   voTrans.setRotation(tf::Quaternion(-geoQuat.y, -geoQuat.z, geoQuat.x, geoQuat.w));
+  //voTrans.setRotation(tf::Quaternion(geoQuat.y, geoQuat.z, geoQuat.x, geoQuat.w));
   voTrans.setOrigin(tf::Vector3(tx, ty, tz));
   tfBroadcasterPointer->sendTransform(voTrans);
 
@@ -785,7 +789,7 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
       double y2 = crx * y1 - srx * z1;
       double z2 = srx * y1 + crx * z1;
       ipd.depth = z2 + transform[5];
-*/
+      */
       ////////////////////////////////////////////////////////////////////
 
       ipd.depth = ipRelations->points[i].s + transform[5];
@@ -904,7 +908,10 @@ int main(int argc, char** argv)
   ros::Subscriber depthCloudSub = nh.subscribe<sensor_msgs::PointCloud2> 
                                   ("/depth_cloud", 5, depthCloudHandler);
 
-  ros::Subscriber imuDataSub = nh.subscribe<sensor_msgs::Imu> ("/imu/data", 5, imuDataHandler);
+  /*
+   * whether you need IMU information
+  */
+  //ros::Subscriber imuDataSub = nh.subscribe<sensor_msgs::Imu> ("/imu/data", 5, imuDataHandler);
 
   ros::Publisher voDataPub = nh.advertise<nav_msgs::Odometry> ("/cam_to_init", 5);
   voDataPubPointer = &voDataPub;

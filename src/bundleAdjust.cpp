@@ -225,8 +225,6 @@ int main(int argc, char** argv)
 
   ros::Publisher odomAftBAPub = nh.advertise<nav_msgs::Odometry> ("/aft_ba_to_init", 1);
 
-  ros::Publisher odomTestBAPub = nh.advertise<nav_msgs::Odometry> ("/test_ba", 1);
-
   tf::TransformBroadcaster tfBroadcaster;
 
   Vector2d pp(0, 0);
@@ -272,25 +270,6 @@ int main(int argc, char** argv)
       txRec = depthPoints[0]->points[1].u;
       tyRec = depthPoints[0]->points[1].v;
       tzRec = depthPoints[0]->points[1].depth;
-
-      //transformAssociateToBA();
-
-      /*geometry_msgs::Quaternion geoQuat_test = tf::createQuaternionMsgFromRollPitchYaw
-                                (rollRec, -pitchRec, -yawRec);
-
-      nav_msgs::Odometry odomTestBA;
-      odomTestBA.header.frame_id = "/camera_init";
-      odomTestBA.child_frame_id = "/test_ba";
-      odomTestBA.header.stamp = ros::Time().fromSec(depthPointsTime);
-      odomTestBA.pose.pose.orientation.x = -geoQuat_test.y;
-      odomTestBA.pose.pose.orientation.y = -geoQuat_test.z;
-      odomTestBA.pose.pose.orientation.z = geoQuat_test.x;
-      odomTestBA.pose.pose.orientation.w = geoQuat_test.w;
-      odomTestBA.pose.pose.position.x = txRec;
-      odomTestBA.pose.pose.position.y = tyRec;
-      odomTestBA.pose.pose.position.z = tzRec;
-      odomTestBAPub.publish(odomTestBA);
-      */
 
       transformAssociateToBA();
 
