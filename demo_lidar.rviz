@@ -7,11 +7,11 @@ Panels:
         - /Global Options1
         - /Camera1
         - /Camera21
-        - /Odometry1
         - /Odometry2
         - /Odometry3
+        - /Odometry3/Shape1
       Splitter Ratio: 0.5
-    Tree Height: 520
+    Tree Height: 544
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -20,7 +20,7 @@ Panels:
       - /2D Nav Goal1
       - /Publish Point1
     Name: Tool Properties
-    Splitter Ratio: 0.588679
+    Splitter Ratio: 0.588679016
   - Class: rviz/Views
     Expanded:
       - /Current View1
@@ -50,28 +50,28 @@ Visualization Manager:
       Enabled: true
       Length: 1
       Name: Camera
-      Radius: 0.1
+      Radius: 0.100000001
       Reference Frame: camera
       Value: true
     - Class: rviz/Axes
       Enabled: false
       Length: 3
       Name: CameraInit
-      Radius: 0.1
+      Radius: 0.100000001
       Reference Frame: camera_init
       Value: false
     - Class: rviz/Axes
       Enabled: true
       Length: 1
       Name: Camera2
-      Radius: 0.1
+      Radius: 0.100000001
       Reference Frame: camera2
       Value: true
     - Class: rviz/Axes
       Enabled: false
       Length: 1
       Name: AfterMapped
-      Radius: 0.2
+      Radius: 0.200000003
       Reference Frame: aft_ba
       Value: false
     - Alpha: 1
@@ -97,7 +97,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.05
+      Size (m): 0.0500000007
       Style: Flat Squares
       Topic: /sync_scan_cloud_filtered
       Unreliable: false
@@ -107,8 +107,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 15.815
-        Min Value: -1.60721
+        Max Value: 10.1294327
+        Min Value: -1.71130836
         Value: true
       Axis: Y
       Channel Name: intensity
@@ -119,15 +119,15 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 71.0111
+      Max Intensity: 71.0111008
       Min Color: 0; 0; 0
-      Min Intensity: 3.12964
+      Min Intensity: 3.1296401
       Name: SurroundCloud
       Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.08
+      Size (m): 0.0799999982
       Style: Flat Squares
       Topic: /surround_cloud
       Unreliable: false
@@ -137,8 +137,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 11.6923
-        Min Value: 1.08858
+        Max Value: 11.6922998
+        Min Value: 1.08858001
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -157,46 +157,119 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.1
+      Size (m): 0.100000001
       Style: Flat Squares
       Topic: /image_points_proj
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-    - Angle Tolerance: 0.1
+    - Angle Tolerance: 0.100000001
       Class: rviz/Odometry
-      Color: 255; 25; 0
-      Enabled: true
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.300000012
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: false
       Keep: 100
-      Length: 1
       Name: Odometry
-      Position Tolerance: 0.1
+      Position Tolerance: 0.100000001
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.100000001
+        Color: 255; 25; 0
+        Head Length: 0.300000012
+        Head Radius: 0.100000001
+        Shaft Length: 1
+        Shaft Radius: 0.0500000007
+        Value: Arrow
       Topic: /cam_to_init
-      Value: true
-    - Angle Tolerance: 0.1
+      Unreliable: false
+      Value: false
+    - Angle Tolerance: 0.100000001
       Class: rviz/Odometry
-      Color: 255; 255; 0
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.300000012
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
       Enabled: true
       Keep: 1000
-      Length: 1
       Name: Odometry
-      Position Tolerance: 0.1
+      Position Tolerance: 0.100000001
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.100000001
+        Color: 255; 25; 0
+        Head Length: 0.300000012
+        Head Radius: 0.100000001
+        Shaft Length: 1
+        Shaft Radius: 0.0500000007
+        Value: Arrow
       Topic: /bef_ba_to_init
+      Unreliable: false
       Value: true
-    - Angle Tolerance: 0.1
+    - Angle Tolerance: 0.100000001
       Class: rviz/Odometry
-      Color: 0; 255; 0
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.300000012
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
       Enabled: true
       Keep: 100
-      Length: 1
       Name: Odometry
-      Position Tolerance: 0.1
+      Position Tolerance: 0.100000001
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.100000001
+        Color: 255; 255; 0
+        Head Length: 0.300000012
+        Head Radius: 0.100000001
+        Shaft Length: 1
+        Shaft Radius: 0.0500000007
+        Value: Arrow
       Topic: /aft_ba_to_init
+      Unreliable: false
       Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
+    Default Light: true
     Fixed Frame: camera_init
     Frame Rate: 30
   Name: root
@@ -218,19 +291,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 58.4817
+      Distance: 68.6640549
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.06
+        Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -1.73784
-        Y: 7.00876
-        Z: 22.9273
+        X: -1.73784006
+        Y: 7.00875998
+        Z: 22.9272995
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.0500000007
+      Invert Z Axis: false
       Name: Current View
-      Near Clip Distance: 0.01
-      Pitch: -0.299796
+      Near Clip Distance: 0.00999999978
+      Pitch: -0.299795985
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
       Yaw: 1.6954
@@ -238,12 +314,12 @@ Visualization Manager:
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 855
+  Height: 885
   Hide Left Dock: false
   Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000016a000002cdfc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000001400430061006d0065007200610049006e006900740100000474000000160000000000000000fb000000100044006900730070006c006100790073010000002800000248000000d600fffffffb0000000a0049006d00610067006501000002760000007f0000001600ffffff000000010000010f00000454fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003600000454000000ac00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004d70000003efc0100000002fb0000000800540069006d00650100000000000004d7000002f600fffffffb0000000800540069006d0065010000000000000450000000000000000000000367000002cd00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000016a000002ebfc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006400fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000001400430061006d0065007200610049006e006900740100000474000000160000000000000000fb000000100044006900730070006c006100790073010000002800000261000000dd00fffffffb0000000a0049006d006100670065010000028f000000840000001600ffffff000000010000010f00000454fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003600000454000000b000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000005770000003efc0100000002fb0000000800540069006d00650100000000000005770000030000fffffffb0000000800540069006d0065010000000000000450000000000000000000000407000002eb00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -252,6 +328,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1239
-  X: 1632
-  Y: 6
+  Width: 1399
+  X: 1961
+  Y: 195

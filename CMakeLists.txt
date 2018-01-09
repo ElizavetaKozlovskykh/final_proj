@@ -5,7 +5,7 @@ set(CMAKE_BUILD_TYPE Release)
 set(BUILD_STATIC_LIBS ON)
 set(BUILD_SHARED_LIBS OFF)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-
+set(OpenCV_DIR "/usr/share/OpenCV")
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -15,10 +15,10 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
 )
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 2.4 REQUIRED)
 find_package(PCL REQUIRED)
 find_package(Eigen3 REQUIRED)
-
+message("OpenCV Version=${OpenCV_VERSION}")
 ###################################
 ## catkin specific configuration ##
 ###################################
