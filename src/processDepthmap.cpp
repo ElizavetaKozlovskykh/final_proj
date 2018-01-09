@@ -224,7 +224,9 @@ void syncCloudHandler(const sensor_msgs::PointCloud2ConstPtr& syncCloud2)
     double voTimeReg = voDataTime[voRegInd];
 
     if (voTimeReg - voTimePre < 0.5) {
-      double scale =  (voTimeReg - time) / (voTimeReg - voTimePre);
+      //modified at 2018/01/09
+      //double scale =  (voTimeReg - time) / (voTimeReg - voTimePre);
+      scale =  (voTimeReg - time) / (voTimeReg - voTimePre);
       if (scale > 1) {
         scale = 1;
       } else if (scale < 0) {

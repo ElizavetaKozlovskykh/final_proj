@@ -83,8 +83,11 @@ void syncCloudHandler(const sensor_msgs::PointCloud2ConstPtr& syncCloud2)
     double voTimeReg = voDataTime[voRegInd];
 
     if (voTimeReg - voTimePre < 0.5) {
-      double scaleLast =  (voTimeReg - time) / (voTimeReg - voTimePre);
-      double scaleCur =  (time - voTimePre) / (voTimeReg - voTimePre);
+      //modified at 2018/01/09
+      //double scaleLast =  (voTimeReg - time) / (voTimeReg - voTimePre);
+      //double scaleCur =  (time - voTimePre) / (voTimeReg - voTimePre);
+      scaleLast =  (voTimeReg - time) / (voTimeReg - voTimePre);
+      scaleCur =  (time - voTimePre) / (voTimeReg - voTimePre);
       if (scaleLast > 1) {
         scaleLast = 1;
       } else if (scaleLast < 0) {
