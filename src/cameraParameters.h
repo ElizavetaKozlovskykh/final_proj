@@ -12,7 +12,7 @@
 #include "opencv2/calib3d/calib3d.hpp"
 
 #include <cv_bridge/cv_bridge.h>
-
+/*
 const int imageWidth = 744;
 const int imageHeight = 480;
 
@@ -21,6 +21,14 @@ double kImage[9] = {4.177343016733e+002, 0, 3.715643918956e+002,
                     0, 0, 1};
 
 double dImage[4] = {-3.396867101163e-001, 1.309347902588e-001, -2.346791258754e-004, 2.209387016957e-004};
+*/
+const int imageWidth = 752;
+const int imageHeight = 480;
 
+double kImage[9] = {689.1393305870386, 0, 392.9549162440343, 
+                    0, 688.877229769814, 241.2361300576189, 
+                    0, 0, 1};
+
+double dImage[4] = {-0.0664360259464121, 0.09238709749524948, -0.0004389269619593578, 0.0006674686484775397};
 #endif
 

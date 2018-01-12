@@ -459,6 +459,9 @@ int main(int argc, char** argv)
               for (; ptRecCount < ptRecNum; ptRecCount++) {
                 if (pointsInd[ptRecCount] == dpPointer->points[j].ind) {
                   prFound = true;
+		  //modified at 2018/01/10
+		  //if(dpPointer->points[j].label == 2)
+		  //  std::cout<<"comme on baby!!"<<std::endl;
                 }
                 if (pointsInd[ptRecCount] >= dpPointer->points[j].ind) {
                     break;

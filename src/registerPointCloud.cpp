@@ -33,6 +33,7 @@ const int startSkipNum = 5;
 
 int showCount = -1;
 const int showSkipNum = 15;
+const int downSizeMap = 10;
 
 ros::Publisher *surroundCloudPubPointer = NULL;
 
@@ -65,9 +66,15 @@ void syncCloudHandler(const sensor_msgs::PointCloud2ConstPtr& syncCloud2)
     return;
   }
 
+  showCount = (showCount + 1) % (showSkipNum + 1);
+  if (showCount != showSkipNum) {
+    return;
+  }
+  
   double time = syncCloud2->header.stamp.toSec();
 
   syncCloud->clear();
+  tempCloud->clear();
   pcl::fromROSMsg(*syncCloud2, *syncCloud);
 
   double scaleCur = 1;
@@ -128,7 +135,8 @@ void syncCloudHandler(const sensor_msgs::PointCloud2ConstPtr& syncCloud2)
   for (int i = 0; i < syncCloudNum; i++) {
     point = syncCloud->points[i];
     double pointDis = sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
-    if (pointDis > 0.3 && pointDis < 5) {
+    //modified at 2018/01/11
+    if (/*pointDis > 0.3 && pointDis < 5*/pointDis > 0.3 && pointDis < 15) {
       double x1 = cosrz2 * point.x - sinrz2 * point.y;
       double y1 = sinrz2 * point.x + cosrz2 * point.y;
       double z1 = point.z;
@@ -141,35 +149,34 @@ void syncCloudHandler(const sensor_msgs::PointCloud2ConstPtr& syncCloud2)
       point.y = y2 + ty2;
       point.z = sinry2 * x2 + cosry2 * z2 + tz2;
 
-      surroundCloud->push_back(point);
+      tempCloud->push_back(point); //modified at 2018/01/11
     }
   }
 
-  showCount = (showCount + 1) % (showSkipNum + 1);
-  if (showCount != showSkipNum) {
-    return;
-  }
-
-  tempCloud->clear();
-  int surroundCloudNum = surroundCloud->points.size();
-  for (int i = 0; i < surroundCloudNum; i++) {
-    point = surroundCloud->points[i];
-
-    double xDiff = point.x - voTx[voRegInd];
-    double yDiff = point.y - voTy[voRegInd];
-    double zDiff = point.z - voTz[voRegInd];
-
-    double pointDis = sqrt(xDiff * xDiff + yDiff * yDiff + zDiff * zDiff);
-    if (pointDis < 50) {
-      tempCloud->push_back(point);
-    }
-  }
-
-  surroundCloud->clear();
+  syncCloud->clear();
   pcl::VoxelGrid<pcl::PointXYZ> downSizeFilter;
   downSizeFilter.setInputCloud(tempCloud);
-  downSizeFilter.setLeafSize(0.2, 0.2, 0.2);
-  downSizeFilter.filter(*surroundCloud);
+  downSizeFilter.setLeafSize(0.3, 0.3, 0.3);
+  downSizeFilter.filter(*syncCloud);
+  
+  for(int idx=0;idx<syncCloud->size();idx++){
+    surroundCloud->push_back(syncCloud->points[idx]);
+  }
+  
+  static int downSizeCount=0;
+  downSizeCount++;
+  
+  if(downSizeCount >= downSizeMap){
+    downSizeCount=0;
+    tempCloud->clear();
+    pcl::VoxelGrid<pcl::PointXYZ> downSizeMapFilter;
+    downSizeMapFilter.setInputCloud(surroundCloud);
+    downSizeMapFilter.setLeafSize(0.3,0.3,0.3);
+    downSizeMapFilter.filter(*tempCloud);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr exchange=surroundCloud;
+    surroundCloud=tempCloud;
+    tempCloud=exchange;
+  }
 
   sensor_msgs::PointCloud2 surroundCloud2;
   pcl::toROSMsg(*surroundCloud, surroundCloud2);

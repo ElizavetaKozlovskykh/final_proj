@@ -180,8 +180,11 @@ void imageDataHandler(const sensor_msgs::Image::ConstPtr& imageData)
         featuresLast[featureCount].y = featuresLast[i].y;
         //有些特征点被筛掉，所以这里featureCount不一定和i相等
         featuresInd[featureCount] = featuresInd[i];
-        //这一步将图像坐标系下的特征点[u,v]，变换到了相机坐标系下，即[u,v]->[X/Z,Y/Z,1],参考《14讲》式5.5
-        //不过要注意这里加了个负号
+        /* 这一步将图像坐标系下的特征点[u,v]，变换到了相机坐标系下，即[u,v]->[X/Z,Y/Z,1],参考《14讲》式5.5
+         * 不过要注意这里加了个负号。相机坐标系默认是z轴向前，x轴向右，y轴向下，图像坐标系默认在图像的左上角，
+	 * featuresCur[featureCount].x - kImage[2]先将图像坐标系从左上角还原到图像中心，然后加个负号，
+	 * 即将默认相机坐标系的x轴负方向作为正方向，y轴同理。所以此时相机坐标系z轴向前，x轴向左，y轴向上
+	 */
         point.u = -(featuresCur[featureCount].x - kImage[2]) / kImage[0];
         point.v = -(featuresCur[featureCount].y - kImage[5]) / kImage[4];
         point.ind = featuresInd[featureCount];
