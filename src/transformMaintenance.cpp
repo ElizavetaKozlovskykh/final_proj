@@ -12,6 +12,12 @@
 const double PI = 3.1415926;
 const double rad2deg = 180 / PI;
 const double deg2rad = PI / 180;
+const double conv[36]={0.001, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                       0.0, 0.001, 0.0, 0.0, 0.0, 0.0, 
+		       0.0, 0.0, 1000000.0, 0.0, 0.0, 0.0, 
+		       0.0, 0.0, 0.0, 1000000.0, 0.0, 0.0, 
+	               0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0, 
+		       0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
 
 double timeOdomBefBA;
 double timeOdomAftBA;
@@ -141,6 +147,10 @@ void voDataHandler(const nav_msgs::Odometry::ConstPtr& voData)
     voData2.pose.pose.position.x = txRec;
     voData2.pose.pose.position.y = tyRec;
     voData2.pose.pose.position.z = tzRec;
+    //modigied at 2018/01/17
+    for(int conv_num=0;conv_num<36;conv_num++)
+      voData2.pose.covariance[conv_num]=conv[conv_num];
+    
     voData2PubPointer->publish(voData2);
 
     voDataTrans2.stamp_ = voData->header.stamp;
@@ -200,13 +210,14 @@ int main(int argc, char** argv)
 
   ros::Publisher voData2Pub = nh.advertise<nav_msgs::Odometry> ("/cam2_to_init", 1);
   voData2PubPointer = &voData2Pub;
-  voData2.header.frame_id = "/camera_init";
-  voData2.child_frame_id = "/camera2";
+  //modified at 2018/01/17
+  voData2.header.frame_id = "camera_init";//remove the leading slash
+  voData2.child_frame_id = "camera2";//remove the leading slash
 
   tf::TransformBroadcaster tfBroadcaster2;
   tfBroadcaster2Pointer = &tfBroadcaster2;
-  voDataTrans2.frame_id_ = "/camera_init";
-  voDataTrans2.child_frame_id_ = "/camera2";
+  voDataTrans2.frame_id_ = "camera_init";//remove the leading slash
+  voDataTrans2.child_frame_id_ = "camera2";//remove the leading slash
 
   ros::spin();
 

@@ -180,7 +180,8 @@ void syncCloudHandler(const sensor_msgs::PointCloud2ConstPtr& syncCloud2)
 
   sensor_msgs::PointCloud2 surroundCloud2;
   pcl::toROSMsg(*surroundCloud, surroundCloud2);
-  surroundCloud2.header.frame_id = "/camera_init";
+  //modified at 2018/01/17
+  surroundCloud2.header.frame_id = "camera_init"; //remove the leading slash
   surroundCloud2.header.stamp = syncCloud2->header.stamp;
   surroundCloudPubPointer->publish(surroundCloud2);
 }
