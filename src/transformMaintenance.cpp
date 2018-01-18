@@ -12,12 +12,12 @@
 const double PI = 3.1415926;
 const double rad2deg = 180 / PI;
 const double deg2rad = PI / 180;
-const double conv[36]={0.001, 0.0, 0.0, 0.0, 0.0, 0.0, 
-                       0.0, 0.001, 0.0, 0.0, 0.0, 0.0, 
-		       0.0, 0.0, 1000000.0, 0.0, 0.0, 0.0, 
-		       0.0, 0.0, 0.0, 1000000.0, 0.0, 0.0, 
-	               0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0, 
-		       0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
+const double conv[36]={0.05, 0.0, 0.0,  0.0, 0.0, 0.0, 
+                       0.0, 0.05, 0.0,  0.0, 0.0, 0.0, 
+		       0.0, 0.0, 0.05, 0.0, 0.0, 0.0, 
+		       0.0, 0.0, 0.0,  1.0, 0.0, 0.0, 
+	               0.0, 0.0, 0.0,  0.0, 1.0, 0.0, 
+		       0.0, 0.0, 0.0,  0.0, 0.0, 1.0};
 
 double timeOdomBefBA;
 double timeOdomAftBA;
@@ -140,13 +140,24 @@ void voDataHandler(const nav_msgs::Odometry::ConstPtr& voData)
     geoQuat = tf::createQuaternionMsgFromRollPitchYaw(rollRec, pitchRec, yawRec);
 
     voData2.header.stamp = voData->header.stamp;
-    voData2.pose.pose.orientation.x = -geoQuat.y;
-    voData2.pose.pose.orientation.y = -geoQuat.z;
-    voData2.pose.pose.orientation.z = geoQuat.x;
+    //modified at 2018/01/18
+    //voData2.pose.pose.orientation.x = -geoQuat.y;
+    //voData2.pose.pose.orientation.y = -geoQuat.z;
+    //voData2.pose.pose.orientation.z = geoQuat.x;
+    //voData2.pose.pose.orientation.w = geoQuat.w;
+    //voData2.pose.pose.position.x = txRec;
+    //voData2.pose.pose.position.y = tyRec;
+    //voData2.pose.pose.position.z = tzRec;
+    //所有在tf中的应用，例如getRPY（）和createQuaternionMsgFromRollPitchYaw（）等都是在一般坐标系下进行的，所以想把voData转换到一般坐标系，只要按顺序将四元数按符号对应就可以了
+    //上面voData传进来的四元数geoQuat.x和geoQuat.y加了负号，所以pitchRec和yawRec是带负号的，因此将这些欧拉角重新转换为四元数后geoQuat.y和geoQuat.z是带负号的
+    //txRec~tzRec是指实际坐标系下的位移量（也就是z朝前，y向上，x向左），因此对应着转换到一般坐标系（x向前，y向左，z向上），tzRec对应着一般坐标系x轴的位移，txRec对应着一般坐标系y轴的位移
+    voData2.pose.pose.orientation.x = geoQuat.x;
+    voData2.pose.pose.orientation.y = -geoQuat.y;
+    voData2.pose.pose.orientation.z = -geoQuat.z;
     voData2.pose.pose.orientation.w = geoQuat.w;
-    voData2.pose.pose.position.x = txRec;
-    voData2.pose.pose.position.y = tyRec;
-    voData2.pose.pose.position.z = tzRec;
+    voData2.pose.pose.position.x = tzRec;
+    voData2.pose.pose.position.y = txRec;
+    voData2.pose.pose.position.z = tyRec;
     //modigied at 2018/01/17
     for(int conv_num=0;conv_num<36;conv_num++)
       voData2.pose.covariance[conv_num]=conv[conv_num];

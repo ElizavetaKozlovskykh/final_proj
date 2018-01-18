@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /SurroundCloud1
         - /Odometry2
         - /Odometry3/Shape1
       Splitter Ratio: 0.5
@@ -51,12 +52,12 @@ Visualization Manager:
       Reference Frame: camera
       Value: false
     - Class: rviz/Axes
-      Enabled: false
+      Enabled: true
       Length: 3
       Name: CameraInit
       Radius: 0.100000001
       Reference Frame: camera_init
-      Value: false
+      Value: true
     - Class: rviz/Axes
       Enabled: false
       Length: 1
@@ -104,16 +105,16 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 2.22266245
-        Min Value: -2.41399693
+        Max Value: 4.03057671
+        Min Value: -0.929194689
         Value: true
-      Axis: Y
+      Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud2
       Color: 255; 255; 255
       Color Transformer: AxisColor
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 71.0111008
@@ -130,7 +131,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: false
+      Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -225,7 +226,7 @@ Visualization Manager:
         Head Radius: 0.100000001
         Shaft Length: 1
         Shaft Radius: 0.0500000007
-        Value: Arrow
+        Value: Axes
       Topic: /odometry/filtered
       Unreliable: false
       Value: true
@@ -267,7 +268,7 @@ Visualization Manager:
   Global Options:
     Background Color: 0; 0; 0
     Default Light: true
-    Fixed Frame: odom
+    Fixed Frame: camera_init
     Frame Rate: 30
   Name: root
   Tools:
@@ -288,25 +289,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 48.2616158
+      Distance: 64.363205
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 9.2628355
-        Y: -15.7161875
-        Z: 3.81774282
+        X: 12.423749
+        Y: -16.5336971
+        Z: 5.30078268
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 1.56979632
+      Pitch: 1.13479674
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.21540046
+      Yaw: 3.07540202
     Saved: ~
 Window Geometry:
   Displays:

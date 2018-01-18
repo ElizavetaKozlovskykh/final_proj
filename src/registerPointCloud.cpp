@@ -9,6 +9,9 @@
 #include <tf/transform_listener.h>
 #include <tf/transform_broadcaster.h>
 
+#include<pcl/common/transforms.h>
+#include<pcl/common/eigen.h>
+
 #include "pointDefinition.h"
 
 const double PI = 3.1415926;
@@ -39,11 +42,33 @@ ros::Publisher *surroundCloudPubPointer = NULL;
 
 void voDataHandler(const nav_msgs::Odometry::ConstPtr& voData)
 {
+  /*
+  //modified at 2018/01/18
   double time = voData->header.stamp.toSec();
 
   double rx, ry, rz;
   geometry_msgs::Quaternion geoQuat = voData->pose.pose.orientation;
   tf::Matrix3x3(tf::Quaternion(geoQuat.z, -geoQuat.x, -geoQuat.y, geoQuat.w)).getRPY(rz, rx, ry);
+
+  double tx = voData->pose.pose.position.x;
+  double ty = voData->pose.pose.position.y;
+  double tz = voData->pose.pose.position.z;
+
+  voDataInd = (voDataInd + 1) % keepVoDataNum;
+  voDataTime[voDataInd] = time;
+  voRx[voDataInd] = rx;
+  voRy[voDataInd] = ry;
+  voRz[voDataInd] = rz;
+  voTx[voDataInd] = tx;
+  voTy[voDataInd] = ty;
+  voTz[voDataInd] = tz;
+  */
+  double time = voData->header.stamp.toSec();
+
+  double rx, ry, rz;
+  geometry_msgs::Quaternion geoQuat = voData->pose.pose.orientation;
+  //下面做点云转换的时候rx和ry取了个负号，因此这里先将rx和ry取为原来的负值
+  tf::Matrix3x3(tf::Quaternion(-geoQuat.x, -geoQuat.y, geoQuat.z, geoQuat.w)).getRPY(rx, ry, rz);
 
   double tx = voData->pose.pose.position.x;
   double ty = voData->pose.pose.position.y;
@@ -75,8 +100,12 @@ void syncCloudHandler(const sensor_msgs::PointCloud2ConstPtr& syncCloud2)
 
   syncCloud->clear();
   tempCloud->clear();
-  pcl::fromROSMsg(*syncCloud2, *syncCloud);
-
+  //modified at 2018/01/18: translate point cloud into the frame that has the same direction with the original VLP coordinate
+  pcl::fromROSMsg(*syncCloud2, *tempCloud);
+  Eigen::Affine3f transf = pcl::getTransformation(0.0,0.0,0.0,-1.57,-3.14,-1.57);
+  pcl::transformPointCloud(*tempCloud, *syncCloud, transf);
+  tempCloud->clear();
+  /////////////////////////////////////////////
   double scaleCur = 1;
   double scaleLast = 0;
   int voPreInd = keepVoDataNum - 1;
@@ -191,7 +220,8 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "registerPointCloud");
   ros::NodeHandle nh;
 
-  ros::Subscriber voDataSub = nh.subscribe<nav_msgs::Odometry> ("/cam2_to_init", 5, voDataHandler);
+  //modified at 2018/01/18
+  ros::Subscriber voDataSub = nh.subscribe<nav_msgs::Odometry> ("/odometry/filtered", 5, voDataHandler);
 
   ros::Subscriber syncCloudSub = nh.subscribe<sensor_msgs::PointCloud2>
                                  ("/sync_scan_cloud_filtered", 5, syncCloudHandler);

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+
+  <node pkg="tf" type="static_transform_publisher" name="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 camera_init odom 10" />
+
+  <include file="$(find robot_localization)/launch/ekf_template.launch" />
+  
+  <include file="$(find demo_lidar)/launch/demo_lidar.launch" />
+  
+
+  <!--<node pkg="rosbag" type="record" name="record" args="-o /home/nrsl/velodyne_ws/bagfiles /camera/image_raw /sync_scan_cloud_filtered" output="screen" >
+  </node> -->
+
+</launch>
+
